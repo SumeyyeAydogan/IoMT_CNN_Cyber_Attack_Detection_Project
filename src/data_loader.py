@@ -110,10 +110,11 @@ def balance_dataset(df, target_column, n_samples=None):
     # Verileri karıştır
     return balanced_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
-def load_and_preprocess_data(data_dir, class_config=6):
+def load_and_preprocess_data(data_dir, class_config=2):
     """
-    Veri setini yükler ve ön işleme yapar.
+    Veri setini yükler, dengeler ve ön işleme yapar.
     """
+    # Tüm CSV dosyalarını birleştir
     all_files = []
     for filename in os.listdir(os.path.join(data_dir, 'train')):
         if filename.endswith('.csv'):
@@ -122,12 +123,11 @@ def load_and_preprocess_data(data_dir, class_config=6):
             
             # Dosya adından saldırı türünü belirle
             attack_type = get_attack_category(filename, class_config)
+            
+            # Etiket sütunu ekle
             df['label'] = attack_type
+            
             all_files.append(df)
-    
-    # Debug bilgisi ekleyin
-    print(f"\nToplam dosya sayısı: {len(all_files)}")
-    print(f"Sınıflandırma modu: {class_config}-class")
     
     # Tüm verileri tek bir DataFrame'de birleştir
     combined_df = pd.concat(all_files, axis=0, ignore_index=True)

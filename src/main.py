@@ -20,6 +20,13 @@ if __name__ == "__main__":
     X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder = load_and_preprocess_data(
         data_dir, args.class_config)  # Pass data_dir here 
 
+    # Veri yüklendikten sonra, eğitim başlamadan önce ekleyin
+    print("\nSınıf Dağılımı:")
+    unique, counts = np.unique(y_train_categorical.argmax(axis=1), return_counts=True)
+    for class_idx, count in zip(unique, counts):
+        class_name = label_encoder.inverse_transform([class_idx])[0]
+        print(f"{class_name}: {count}")
+
     input_shape = (X_train.shape[1], 1) 
     model = create_cnn_model(input_shape, y_train_categorical.shape[1])
 
@@ -52,10 +59,3 @@ if __name__ == "__main__":
     print("F1-Score:", f1)
     print("\nClassification Report:\n", classification_report(y_test_decoded, y_pred))
     print("\nConfusion Matrix:\n", confusion_matrix(y_test_decoded, y_pred))
-
-    # Veri yüklendikten sonra, eğitim başlamadan önce ekleyin
-    print("\nSınıf Dağılımı:")
-    unique, counts = np.unique(y_train_categorical.argmax(axis=1), return_counts=True)
-    for class_idx, count in zip(unique, counts):
-        class_name = label_encoder.inverse_transform([class_idx])[0]
-        print(f"{class_name}: {count}")
